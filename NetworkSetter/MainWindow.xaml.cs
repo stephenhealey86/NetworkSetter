@@ -1,4 +1,5 @@
-﻿using System;
+﻿using NetworkSetter.ViewModels;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -23,6 +24,18 @@ namespace NetworkSetter
         public MainWindow()
         {
             InitializeComponent();
+            Loaded += new RoutedEventHandler(MainWindow_Loaded);
+            this.DataContext = new MainWindowViewModel(this);
+        }
+
+        private void MainWindow_Loaded(object sender, RoutedEventArgs e)
+        {
+            Style _style = null;
+            if (Microsoft.Windows.Shell.SystemParameters2.Current.IsGlassEnabled == true)
+            {
+                _style = (Style)Resources["CustomWindowStyle"];
+            }
+            this.Style = _style;
         }
     }
 }
