@@ -175,7 +175,7 @@
                                     materialDesign:HintAssist.Hint="Name"
                                     Foreground="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=TabControl}, Path=Foreground}"
                                     Style="{DynamicResource MaterialDesignFloatingHintTextBox}"
-                                    Text="{Binding Name}" />
+                                    Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" />
                                 <!--  Get Network Adapters  -->
                                 <ComboBox
                                     Margin="10"
@@ -192,7 +192,7 @@
                                     Foreground="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=TabControl}, Path=Foreground}"
                                     IsReadOnly="{Binding ValidForm}"
                                     Style="{DynamicResource MaterialDesignFloatingHintTextBox}"
-                                    Text="{Binding IPAddress}" />
+                                    Text="{Binding IPAddress, UpdateSourceTrigger=PropertyChanged}" />
                                 <!--  Enter Config Subnet Address  -->
                                 <custom:myIPEntry
                                     Margin="10"
@@ -202,7 +202,7 @@
                                     Foreground="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=TabControl}, Path=Foreground}"
                                     IsReadOnly="{Binding ValidForm}"
                                     Style="{DynamicResource MaterialDesignFloatingHintTextBox}"
-                                    Text="{Binding SubnetAddress}" />
+                                    Text="{Binding SubnetAddress, UpdateSourceTrigger=PropertyChanged}" />
                                 <!--  Enter Config Gateway Address  -->
                                 <custom:myIPEntry
                                     Margin="10"
@@ -212,7 +212,7 @@
                                     Foreground="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=TabControl}, Path=Foreground}"
                                     IsReadOnly="{Binding ValidForm}"
                                     Style="{DynamicResource MaterialDesignFloatingHintTextBox}"
-                                    Text="{Binding GatewayAddress}" />
+                                    Text="{Binding GatewayAddress, UpdateSourceTrigger=PropertyChanged}" />
                                 <!--  Set the adapter ip settings  -->
                                 <Button
                                     Margin="10"

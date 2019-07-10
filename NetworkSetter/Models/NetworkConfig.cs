@@ -1,54 +1,69 @@
 ﻿using NetworkSetter.Events;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Management;
 using System.Net;
 using System.Net.NetworkInformation;
+using System.Runtime.CompilerServices;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace NetworkSetter.Models
 {
-    public class NetworkConfig
+    public class NetworkConfig : INotifyPropertyChanged
     {
         #region Private Variables
         private string name = "";
+        private string ipAddress = "0.0.0.0";
+        private string subnetAddress = "0.0.0.0";
+        private string gatewayAddress = "0.0.0.0";
+        private string selectedNetworkAdapter = null;
         #endregion
 
         #region Public Variables
         public string Name
         {
             get { return name; }
-            set { name = value; OnNetworkSettingsRefreshEvent(new EventArgs()); }
-        }
-
-        private void OnNetworkSettingsRefreshEvent(EventArgs eventArgs)
-        {
-            NetworkSettingsRefreshEvent?.Invoke(this, eventArgs);
-        }
-
-        private void OnNetworkNetworkSettingsErrorEvent(NetworkErrorEventArgs eventArgs)
-        {
-            NetworkSettingsErrorEvent?.Invoke(this, eventArgs);
+            set { name = value; OnPropertyChanged(); }
         }
 
         public List<string> NetworkAdapters => GetNetworkAdapters();
 
-        public string SelectedNetworkAdapter { get; set; }
+        public string SelectedNetworkAdapter
+        {
+            get { return selectedNetworkAdapter; }
+            set { selectedNetworkAdapter = value; OnPropertyChanged(); }
+        }
 
-        public string IPAddress { get; set; } = "0.0.0.0";
-        public string SubnetAddress { get; set; } = "0.0.0.0";
-        public string GatewayAddress { get; set; } = "0.0.0.0";
+        public string IPAddress
+        {
+            get { return ipAddress; }
+            set { ipAddress = value; OnPropertyChanged(); }
+        }
+        public string SubnetAddress
+        {
+            get { return subnetAddress; }
+            set { subnetAddress = value; OnPropertyChanged(); }
+        }
+        public string GatewayAddress
+        {
+            get { return gatewayAddress; }
+            set { gatewayAddress = value; OnPropertyChanged(); }
+        }
         public EventHandler<NetworkErrorEventArgs> NetworkSettingsErrorEvent;
-        public EventHandler<EventArgs> NetworkSettingsRefreshEvent;
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
         public bool ValidForm
         {
             get { return Name.Length < 3; }
         }
         public bool ValidConfig
         {
-            get { return true; }
+            get { return ValidIPAddress(); }
         }
         #endregion
 
@@ -60,6 +75,20 @@ namespace NetworkSetter.Models
         #endregion
 
         #region Helpers
+        private void OnNetworkNetworkSettingsErrorEvent(NetworkErrorEventArgs eventArgs)
+        {
+            NetworkSettingsErrorEvent?.Invoke(this, eventArgs);
+        }
+
+        protected void OnPropertyChanged([CallerMemberName] string propertyName = "")
+        {
+            var changed = PropertyChanged;
+            if (changed == null)
+                return;
+
+            changed.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
         private List<string> GetNetworkAdapters()
         {
             NetworkInterface[] adapters = NetworkInterface.GetAllNetworkInterfaces();
@@ -110,7 +139,10 @@ namespace NetworkSetter.Models
 
         private bool ValidIPAddress()
         {
-            return true;
+            return Regex.IsMatch(IPAddress, @"\b(?:(?:2(?:[0-4][0-9]|5[0-5])|[0-1]?[0-9]?[0-9])\.){3}(?:(?:2([0-4][0-9]|5[0-5])|[0-1]?[0-9]?[0-9]))\b")
+                    && Regex.IsMatch(SubnetAddress, @"\b(?:(?:2(?:[0-4][0-9]|5[0-5])|[0-1]?[0-9]?[0-9])\.){3}(?:(?:2([0-4][0-9]|5[0-5])|[0-1]?[0-9]?[0-9]))\b")
+                    && Regex.IsMatch(GatewayAddress, @"\b(?:(?:2(?:[0-4][0-9]|5[0-5])|[0-1]?[0-9]?[0-9])\.){3}(?:(?:2([0-4][0-9]|5[0-5])|[0-1]?[0-9]?[0-9]))\b")
+                    && SelectedNetworkAdapter != null;
         }
         #endregion
     }

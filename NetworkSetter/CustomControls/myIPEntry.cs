@@ -6,12 +6,18 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media;
 
 namespace NetworkSetter.CustomControls
 {
     class myIPEntry : TextBox
     {
-        private string oldText;
+        Brush brush;
+
+        public myIPEntry()
+        {
+            brush = Foreground;
+        }
 
         /// <summary>
         /// Only allow certain keys
@@ -21,9 +27,6 @@ namespace NetworkSetter.CustomControls
         {
             base.OnPreviewKeyDown(e);
 
-            //Store text before update
-            oldText = this.Text;
-
             var key = e.Key;
             if (key >= Key.D0 && key <= Key.D9)
             {
@@ -31,10 +34,30 @@ namespace NetworkSetter.CustomControls
             }
             else if (key == Key.OemPeriod)
             {
+                var cursorPosition = SelectionStart;
+                for (int i = cursorPosition; i < Text.Length; i++)
+                {
+                    if (Text[i] == '.')
+                    {
+                        SelectionStart = i + 1;
+                        SelectionLength = 0;
+                        break;
+                    }
+                }
+                e.Handled = true;
                 return;
             }
             else if (key == Key.Delete || key == Key.Back)
             {
+                var backSelection = SelectionStart == 0 ? SelectionStart : SelectionStart - 1;
+                if (Text[backSelection] == '.' && key == Key.Back)
+                {
+                    e.Handled = true;
+                }
+                else if (Text.Length != SelectionStart && Text[SelectionStart] == '.' && key == Key.Delete)
+                {
+                    e.Handled = true;
+                }
                 return;
             }
             else if (key == Key.Left || key == Key.Right)
@@ -52,16 +75,14 @@ namespace NetworkSetter.CustomControls
         protected override void OnTextChanged(TextChangedEventArgs e)
         {
             base.OnTextChanged(e);
-            // Get new text
-            var text = this.Text;
             // Compare new text
-            if (!Regex.IsMatch(text, @"\b(?:(?:2(?:[0-4][0-9]|5[0-5])|[0-1]?[0-9]?[0-9])\.){3}(?:(?:2([0-4][0-9]|5[0-5])|[0-1]?[0-9]?[0-9]))\b"))
+            if (!Regex.IsMatch(Text, @"\b(?:(?:2(?:[0-4][0-9]|5[0-5])|[0-1]?[0-9]?[0-9])\.){3}(?:(?:2([0-4][0-9]|5[0-5])|[0-1]?[0-9]?[0-9]))\b"))
             {
-                // Set text back to previous value
-                this.Text = oldText;
-                // Set cursor to end
-                this.SelectionStart = this.Text.Length;
-                this.SelectionLength = 0;
+                Foreground = Brushes.Red;
+            }
+            else
+            {
+                Foreground = brush;
             }
         }
     }

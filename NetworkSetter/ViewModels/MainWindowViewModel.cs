@@ -37,7 +37,6 @@ namespace NetworkSetter.ViewModels
                 return $"V{Major}.{Minor}.{Revision}";
             }
         }
-        private TextBox txtIPAddress;
         #endregion
 
         #region Public Variables
@@ -127,7 +126,7 @@ namespace NetworkSetter.ViewModels
             foreach (NetworkConfig config in NetworkSettings)
             {
                 config.NetworkSettingsErrorEvent += NetworkErrorEvent;
-                config.NetworkSettingsRefreshEvent += delegate { Refresh(); };
+                config.PropertyChanged += delegate { Refresh(); };
             }
         }
         /// <summary>
@@ -185,7 +184,7 @@ namespace NetworkSetter.ViewModels
             {
                 // Remove event handler before serialization
                 config.NetworkSettingsErrorEvent = null;
-                config.NetworkSettingsRefreshEvent = null;
+                //config.PropertyChanged = null;
             }
             var jsonObject = JsonConvert.SerializeObject(obj);
             JToken jo = JToken.Parse(jsonObject);
@@ -359,7 +358,7 @@ namespace NetworkSetter.ViewModels
             NetworkSettings.Add(new NetworkConfig());
             SelectedTab = NetworkSettings.Count - 1;
             NetworkSettings[SelectedTab].NetworkSettingsErrorEvent += NetworkErrorEvent;
-            NetworkSettings[SelectedTab].NetworkSettingsRefreshEvent += delegate { Refresh(); };
+            NetworkSettings[SelectedTab].PropertyChanged += delegate { Refresh(); };
             OnPropertyChanged(nameof(SelectedTab));
             Refresh();
         }
