@@ -37,9 +37,9 @@ namespace NetworkSetter.Models
 
         public string SelectedNetworkAdapter { get; set; }
 
-        public string IPAddress { get; set; }
-        public string SubnetAddress { get; set; }
-        public string GatewayAddress { get; set; }
+        public string IPAddress { get; set; } = "0.0.0.0";
+        public string SubnetAddress { get; set; } = "0.0.0.0";
+        public string GatewayAddress { get; set; } = "0.0.0.0";
         public EventHandler<NetworkErrorEventArgs> NetworkSettingsErrorEvent;
         public EventHandler<EventArgs> NetworkSettingsRefreshEvent;
         public bool ValidForm

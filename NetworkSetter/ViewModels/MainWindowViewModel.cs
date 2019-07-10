@@ -15,6 +15,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media;
 
 namespace NetworkSetter.ViewModels
 {
@@ -36,6 +37,7 @@ namespace NetworkSetter.ViewModels
                 return $"V{Major}.{Minor}.{Revision}";
             }
         }
+        private TextBox txtIPAddress;
         #endregion
 
         #region Public Variables

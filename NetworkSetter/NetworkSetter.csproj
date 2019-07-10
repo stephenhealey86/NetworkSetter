@@ -77,6 +77,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="CustomControls\myIPEntry.cs" />
     <Compile Include="Events\NetworkErrorEventArgs.cs" />
     <Compile Include="Models\NetworkConfig.cs" />
     <Compile Include="Models\Themes.cs" />
@@ -138,7 +139,6 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="CustomControls\" />
     <Folder Include="Views\" />
   </ItemGroup>
   <ItemGroup>
