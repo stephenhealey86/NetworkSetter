@@ -180,6 +180,7 @@
                                 <ComboBox
                                     Margin="10"
                                     materialDesign:HintAssist.Hint="Network Adapter"
+                                    IsEnabled="{Binding ValidForm, Converter={convertors:InvertBoolValueConvertor}}"
                                     ItemsSource="{Binding NetworkAdapters}"
                                     ScrollViewer.VerticalScrollBarVisibility="Hidden"
                                     SelectedValue="{Binding SelectedNetworkAdapter}" />
@@ -214,21 +215,21 @@
                                     Style="{DynamicResource MaterialDesignFloatingHintTextBox}"
                                     Text="{Binding GatewayAddress, UpdateSourceTrigger=PropertyChanged}" />
                                 <!--  Set the adapter ip settings  -->
-                                <StackPanel Orientation="Horizontal"  HorizontalAlignment="Center">
-                                    <!--Static-->
+                                <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
+                                    <!--  Static  -->
                                     <Button
-                                    Margin="10"
-                                    Command="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=Window}, Path=DataContext.ConfigureAdapterCommand}"
-                                    Content="Static"
-                                    IsEnabled="{Binding ValidConfig}"
-                                    Style="{DynamicResource MaterialDesignRaisedButton}" />
-                                    <!--Automatic-->
+                                        Margin="10"
+                                        Command="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=Window}, Path=DataContext.ConfigureAdapterCommand}"
+                                        Content="Static"
+                                        IsEnabled="{Binding ValidConfig}"
+                                        Style="{DynamicResource MaterialDesignRaisedButton}" />
+                                    <!--  Automatic  -->
                                     <Button
-                                    Margin="10"
-                                    Command="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=Window}, Path=DataContext.ObtainIPAutoCommand}"
-                                    Content="DHCP"
-                                    IsEnabled="{Binding ValidAuto}"
-                                    Style="{DynamicResource MaterialDesignRaisedButton}" />
+                                        Margin="10"
+                                        Command="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=Window}, Path=DataContext.ObtainIPAutoCommand}"
+                                        Content="DHCP"
+                                        IsEnabled="{Binding ValidAuto}"
+                                        Style="{DynamicResource MaterialDesignRaisedButton}" />
                                 </StackPanel>
                             </StackPanel>
 
