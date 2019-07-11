@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Management;
 using System.Net;
@@ -65,6 +66,10 @@ namespace NetworkSetter.Models
         {
             get { return ValidIPAddress(); }
         }
+        public bool ValidAuto
+        {
+            get { return SelectedNetworkAdapter != null; }
+        }
         #endregion
 
         #region Constructor
@@ -94,36 +99,55 @@ namespace NetworkSetter.Models
             NetworkInterface[] adapters = NetworkInterface.GetAllNetworkInterfaces();
             var list = new List<string>() { null };
             list.AddRange((from adapter in adapters
-             select adapter.Description).ToList());
+             select adapter.Name).ToList());
             return list;
         }
 
-        public void SetNetworkAsync()
+        public void SetNetwork()
         {
             try
             {
-                ManagementClass mc = new ManagementClass("Win32_NetworkAdapterConfiguration");
-                ManagementObjectCollection moc = mc.GetInstances();
-
-                NetworkInterface[] adapters = NetworkInterface.GetAllNetworkInterfaces();
-
-                var mos = from ManagementObject mo in moc
-                                where mo["Description"].ToString() == SelectedNetworkAdapter
-                                select mo;
-                var adapter = mos.First();
-                if ((bool)adapter["IPEnabled"] && ValidIPAddress())
+                if (ValidIPAddress())
                 {
-                    ManagementBaseObject newIP = adapter.GetMethodParameters("EnableStatic");
-                    ManagementBaseObject newGateway = adapter.GetMethodParameters("SetGateways");
+                    Process p = new Process();
+                    ProcessStartInfo psi = new ProcessStartInfo("netsh", $"interface ip set address {SelectedNetworkAdapter} static {ipAddress} {subnetAddress} {gatewayAddress} 1");
+                    p.StartInfo = psi;
+                    p.StartInfo.Verb = "runas";
+                    p.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
+                    
+                    if (p.Start())
+                    {
+                        OnNetworkNetworkSettingsErrorEvent(new NetworkErrorEventArgs("IP settings updated"));
+                    }
+                    else
+                    {
+                        OnNetworkNetworkSettingsErrorEvent(new NetworkErrorEventArgs("Failed to set adapter"));
+                    }
+                }
+                else
+                {
+                    OnNetworkNetworkSettingsErrorEvent(new NetworkErrorEventArgs("Failed to set adapter"));
+                }
+            }
+            catch (Exception e)
+            {
+                OnNetworkNetworkSettingsErrorEvent(new NetworkErrorEventArgs(e.Message));
+                throw;
+            }
+        }
 
-                    newIP["IPAddress"] = new string[] { IPAddress };
-                    newIP["SubnetMask"] = new string[] { SubnetAddress };
+        public void ObtainIPAuto()
+        {
+            try
+            {
+                Process p = new Process();
+                ProcessStartInfo psi = new ProcessStartInfo("netsh", $"interface ip set address {SelectedNetworkAdapter} dhcp");
+                p.StartInfo = psi;
+                p.StartInfo.Verb = "runas";
+                p.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
 
-                    newGateway["DefaultIPGateway"] = new string[] { GatewayAddress };
-
-                    ManagementBaseObject setIP = adapter.InvokeMethod("EnableStatic", newIP, null);
-                    ManagementBaseObject setGateway = adapter.InvokeMethod("SetGateways", newGateway, null);
-
+                if (p.Start())
+                {
                     OnNetworkNetworkSettingsErrorEvent(new NetworkErrorEventArgs("IP settings updated"));
                 }
                 else
@@ -134,6 +158,7 @@ namespace NetworkSetter.Models
             catch (Exception e)
             {
                 OnNetworkNetworkSettingsErrorEvent(new NetworkErrorEventArgs(e.Message));
+                throw;
             }
         }
 

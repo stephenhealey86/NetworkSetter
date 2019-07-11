@@ -40,7 +40,7 @@ namespace NetworkSetter.CustomControls
                     if (Text[i] == '.')
                     {
                         SelectionStart = i + 1;
-                        SelectionLength = 0;
+                        SelectionLength = 1;
                         break;
                     }
                 }

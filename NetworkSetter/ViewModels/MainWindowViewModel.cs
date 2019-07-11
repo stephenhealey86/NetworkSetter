@@ -102,7 +102,12 @@ namespace NetworkSetter.ViewModels
         /// <summary>
         /// The command to set adapter ip settings
         /// </summary>
-        public ICommand ConfigureAdapter { get; set; }
+        public ICommand ConfigureAdapterCommand { get; set; }
+
+        /// <summary>
+        /// The command for reseting the network adaptor to automatic
+        /// </summary>
+        public ICommand ObtainIPAutoCommand { get; set; }
         #endregion
 
         #region Constructor
@@ -157,7 +162,8 @@ namespace NetworkSetter.ViewModels
             // Tab Commands
             RemoveConfigCommand = new RelayParamterCommand((param) => RemoveConfigCommandAction(param));
             NewConfigCommand = new RelayCommand(() => NewConfigCommandAction());
-            ConfigureAdapter = new RelayCommand(() => ConfigureAdapterAction());
+            ConfigureAdapterCommand = new RelayCommand(() => ConfigureAdapterCommandAction());
+            ObtainIPAutoCommand = new RelayCommand(() => ObtainIPAutoCommandAction());
         }
 
         /// <summary>
@@ -430,9 +436,17 @@ namespace NetworkSetter.ViewModels
         /// <summary>
         /// Set the selected adpater settings
         /// </summary>
-        private void ConfigureAdapterAction()
+        private void ConfigureAdapterCommandAction()
         {
-            NetworkSettings[SelectedTab].SetNetworkAsync();
+            NetworkSettings[SelectedTab].SetNetwork();
+        }
+
+        /// <summary>
+        /// Set the selected adpater back to automatic IP
+        /// </summary>
+        private void ObtainIPAutoCommandAction()
+        {
+            NetworkSettings[SelectedTab].ObtainIPAuto();
         }
         #endregion
     }
