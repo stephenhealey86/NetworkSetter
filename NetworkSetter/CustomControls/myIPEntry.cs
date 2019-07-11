@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
@@ -28,21 +29,28 @@ namespace NetworkSetter.CustomControls
             base.OnPreviewKeyDown(e);
 
             var key = e.Key;
-            if (key >= Key.D0 && key <= Key.D9)
+            if ((key >= Key.D0 && key <= Key.D9) || (key >= Key.NumPad0 && key <= Key.NumPad9))
             {
                 return;
             }
-            else if (key == Key.OemPeriod)
+            else if (key == Key.OemPeriod || key == Key.Decimal)
             {
-                var cursorPosition = SelectionStart;
-                for (int i = cursorPosition; i < Text.Length; i++)
+                var cursorStart = SelectionStart;
+                bool firstDecimal = false;
+                for (int i = cursorStart; i < Text.Length; i++)
                 {
-                    if (Text[i] == '.')
+                    if (Text[i] == '.' && !firstDecimal)
                     {
                         SelectionStart = i + 1;
-                        SelectionLength = 1;
+                        firstDecimal = true;
+                        continue;
+                    }
+                    if (Text[i] == '.' && firstDecimal)
+                    {
+                        SelectionLength = i - SelectionStart;
                         break;
                     }
+                    SelectionLength = Text.Length - SelectionStart;
                 }
                 e.Handled = true;
                 return;
@@ -70,6 +78,20 @@ namespace NetworkSetter.CustomControls
             }
 
             e.Handled = true;
+        }
+
+        protected override void OnGotFocus(RoutedEventArgs e)
+        {
+            base.OnGotFocus(e);
+            SelectionStart = 0;
+            for (int i = 0; i < Text.Length; i++)
+            {
+                if (Text[i] == '.')
+                {
+                    SelectionLength = i;
+                    break;
+                }
+            }
         }
 
         protected override void OnTextChanged(TextChangedEventArgs e)
