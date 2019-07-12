@@ -1,4 +1,5 @@
-﻿using System;
+﻿using NetworkSetter.Helpers;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -13,11 +14,11 @@ namespace NetworkSetter.CustomControls
 {
     class myIPEntry : TextBox
     {
-        Brush brush;
+        Brush DefaultForeground;
 
         public myIPEntry()
         {
-            brush = Foreground;
+            DefaultForeground = Foreground;
         }
 
         /// <summary>
@@ -141,7 +142,8 @@ namespace NetworkSetter.CustomControls
             }
             else
             {
-                Foreground = brush;
+                TabControl tabControl = FindParentHelper.FindParent<TabControl>(this);
+                Foreground = tabControl?.Foreground ?? DefaultForeground;
             }
         }
     }

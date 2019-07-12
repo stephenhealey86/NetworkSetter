@@ -107,6 +107,7 @@
     </ApplicationDefinition>
     <Compile Include="CustomControls\myIPEntry.cs" />
     <Compile Include="Events\NetworkErrorEventArgs.cs" />
+    <Compile Include="Helpers\FindParentHelper.cs" />
     <Compile Include="Models\NetworkConfig.cs" />
     <Compile Include="Models\Themes.cs" />
     <Compile Include="ValueConvertors\BaseMultiValueConverter.cs" />
