@@ -170,6 +170,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Views\" />
+    <Folder Include="Web\Images\" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="network-wired-solid.ico" />
